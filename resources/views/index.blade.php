@@ -20,17 +20,29 @@
         </a>
     </div>
     @foreach ($contacts as $contact)
-        <div class="card my-2 my-md-3 mx-3 shadow me-4 rounded blur">
+        <div class="card my-2 my-md-3 mx-3 shadow me-4 rounded blur contact-list">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <img src="{{ $contact->photo ? asset('storage/photo/' . $contact->photo) : asset('misc/user-default.png') }}"
                         class="index-thumbnail" alt="" />
-                    <a href="{{ route('contact.show', $contact->id) }}" class="text-decoration-none">
-                        <div class="">
-                            <h3 class="text-black">{{ $contact->name }}</h3>
-                            <p class="mb-0 text-black">{{ $contact->phone }}</p>
+                    <div class="d-flex justify-content-between align-items-center flex-md-row flex-column">
+                        <a href="{{ route('contact.show', $contact->id) }}" class="text-decoration-none">
+                            <div class="">
+                                <h3 class="text-black">{{ $contact->name }}</h3>
+                                <p class=" text-black">{{ $contact->phone }}</p>
+
+                            </div>
+                        </a>
+                        <div class="ms-md-3">
+                            <a href="tel:{{ $contact->phone }}"
+                                class="btn btn-outline-success p-2 p-md-3 text-decoration-none">
+                                <span class="p-1 p-md-2 bg-success rounded-circle text-light me-3">
+                                    <i class="bi bi-telephone"></i>
+                                </span>
+                                Call Now
+                            </a>
                         </div>
-                    </a>
+                    </div>
                     <div class="to-right-icons">
                         <div
                             class="mb-2 p-3 p-md-4 bg-primary border text-light d-flex justify-content-center align-items-center icon-rounded">
@@ -57,3 +69,17 @@
         @include('./plugin/swal')
     @endsection
 @endif
+@section('js')
+    <script>
+        ScrollReveal.reveal('.contact-list', {
+            distance: '50px',
+            easing: 'ease-out',
+            duration: 600,
+            interval: 200,
+            origin: 'bottom',
+            mobile: true,
+            reset: true,
+            scale: 0.9
+        });
+    </script>
+@endsection

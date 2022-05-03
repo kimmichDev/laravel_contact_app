@@ -8,7 +8,7 @@
     </nav>
 @endsection
 @section('content')
-    <div class="card">
+    <div class="card blur shadow">
         <div class="card-body">
             <div class="my-3">
                 <h3>Create Contact</h3>
