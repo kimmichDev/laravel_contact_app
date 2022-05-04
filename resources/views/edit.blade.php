@@ -1,11 +1,15 @@
 @extends('layout')
 @section('bread')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('contact.index') }}">Home</a></li>
-            <li class="breadcrumb-item active">Create</li>
-        </ol>
-    </nav>
+    <div class="">
+        <div class="btn-group mb-3">
+            <a class="btn btn-outline-primary" href="{{ route('contact.index') }}">
+                <i class="bi bi-house-heart"></i>
+            </a>
+            <button class="btn btn-success">
+                <i class="bi bi-pen"></i>
+            </button>
+        </div>
+    </div>
 @endsection
 @section('content')
     <div class="card blur shadow">

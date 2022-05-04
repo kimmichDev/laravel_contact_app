@@ -1,11 +1,15 @@
 @extends('layout')
 @section('bread')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('contact.index') }}">Home</a></li>
-            <li class="breadcrumb-item active">Detail</li>
-        </ol>
-    </nav>
+    <div class="mb-3">
+        <div class="btn-group">
+            <a class="btn btn-outline-primary" href="{{ route('contact.index') }}">
+                <i class="bi bi-house-heart"></i>
+            </a>
+            <button class="btn btn-outline-danger">
+                <i class="bi bi-card-list"></i>
+            </button>
+        </div>
+    </div>
 @endsection
 @section('content')
     <div>
@@ -14,8 +18,8 @@
                 <div class="d-flex justify-content-center">
                     <div>
                         <div class="d-flex justify-content-center align-items-center">
-                            <img src="{{ asset('storage/photo/' . $contact->photo) }}" class="create-thumbnail text-center"
-                                alt="">
+                            <img src="{{ $contact->photo ? asset('storage/photo/' . $contact->photo) : asset('misc/user-default.png') }}"
+                                class="index-thumbnail" alt="" />
                         </div>
                         <div class="">
                             <h3 class="my-3">

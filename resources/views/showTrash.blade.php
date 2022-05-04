@@ -1,30 +1,40 @@
 @extends('layout')
 @section('bread')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('contact.index') }}">Home</a></li>
-            <li class="breadcrumb-item">Trashs</li>
-        </ol>
-    </nav>
+    <div class="mb-3">
+        <div class="btn-group">
+            <a class="btn btn-outline-primary" href="{{ route('contact.index') }}">
+                <i class="bi bi-house-heart"></i>
+            </a>
+            <button class="btn btn-danger">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </div>
 @endsection
 @section('content')
+    <div class="d-flex justify-content-between align-items-center">
+        <h4>Trash Bin <i class="bi bi-trash2-fill text-danger"></i></h4>
+
+        <div>
+            <button type="submit" form="checkForm"
+                class="btn btn-danger p-del-btn d-none animate__animated animate__fadeIn trash-text">
+            </button>
+        </div>
+    </div>
     <div class="d-none">
         <form action="{{ route('bulkPermanentDelete') }}" id="checkForm" method="POST">
             @method("delete")
             @csrf
         </form>
     </div>
-    <div>
-        <input type="submit" value="Delete" form="checkForm" class="btn btn-danger p-del-btn d-none">
-    </div>
-    @foreach ($contacts as $contact)
+    @forelse ($contacts as $contact)
         <div class="card my-2 my-md-3 mx-3 shadow me-4 rounded blur contact-list">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" name="bulkChecks[]" type="checkbox" id="inlineCheckbox1"
-                                form="checkForm" value="{{ $contact->id }}">
+                            <input class="form-check-input checkBox" name="bulkChecks[]" type="checkbox"
+                                id="inlineCheckbox1" form="checkForm" value="{{ $contact->id }}">
                         </div>
                         <img src="{{ $contact->photo ? asset('storage/photo/' . $contact->photo) : asset('misc/user-default.png') }}"
                             class="index-thumbnail" alt="" />
@@ -67,7 +77,13 @@
                 </div>
             </div>
         </div>
-    @endforeach
+    @empty
+        <div class="card blur shadow">
+            <div class="card-body">
+                <p class="fw-bold"> No Contacts in trash</p>
+            </div>
+        </div>
+    @endforelse
 @endsection
 @if (session('status'))
     @section('js')
@@ -79,8 +95,14 @@
         let checks = document.querySelectorAll(".form-check-input");
         checks.forEach((c) => {
             c.addEventListener("change", () => {
-                document.querySelector(".p-del-btn").classList.remove("d-none");
-                document.querySelector(".p-del-btn").classList.add("d-inline-block");
+                $(".p-del-btn").removeClass("d-none animate__fadeOut");
+                $(".p-del-btn").addClass("d-inline-block animate__fadeIn");
+                $('.trash-text').html(
+                    `Delete permanently <span class="fw-bold">${$('.checkBox:checked').length} contact${$('.checkBox:checked').length>1 ? "s" : ""}</span>`
+                )
+                $('.checkBox:checked').length == 0 && $(".p-del-btn")
+                    .removeClass("animate__fadeIn d-inline-block")
+                    .addClass("animate__fadeOut d-none");
             })
         })
     </script>
