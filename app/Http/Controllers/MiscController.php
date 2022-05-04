@@ -16,7 +16,7 @@ class MiscController extends Controller
 
     public function permanentDelete($id)
     {
-        $contact = Contact::withTrashed()->find($id);
+        $contact = Contact::onlyTrashed()->find($id);
         Storage::delete("public/photo/" . $contact->photo);
         $contact->forceDelete();
         return redirect()->back()->with("status", "Contact is permanently deleted");
@@ -33,17 +33,15 @@ class MiscController extends Controller
         return redirect()->route("contact.index")->with("status", "Contacts were moved to trash");
     }
 
-    public function bulkPermanentDelete(Request $request)
+    public function bulkAction(Request $request)
     {
 
-        Contact::onlyTrashed()->whereIn("id", $request->bulkChecks)->forceDelete();
-        // foreach ($request->bulkChecks as $key => $value) {
-        //     $contact = Contact::withTrashed()->find($value);
-        //     Storage::delete("public/photo/" . $contact->photo);
-        //     $contact->forceDelete();
-        //     $contact->delete();
-        // };
-        return redirect()->back()->with("status", "Contact is permanently deleted");
+        if (request('action') === "delete") {
+            Contact::onlyTrashed()->whereIn("id", $request->bulkChecks)->forceDelete();
+            return redirect()->back()->with("status", "Contact permanently deleted");
+        }
+        Contact::onlyTrashed()->whereIn("id", $request->bulkChecks)->restore();
+        return redirect()->back()->with("status", "Contact restored");
     }
 
     public function restore(Request $request)
