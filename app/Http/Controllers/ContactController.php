@@ -40,7 +40,7 @@ class ContactController extends Controller
         $request->validate([
             "name" => "required|min:3",
             "phone" => 'required|regex:/(0)[0-9]{9}/',
-            "photo" => "nullable|mimes:png,jpeg",
+            "photo" => "nullable|mimes:png,jpeg|file|max:2000",
         ]);
         $contact = new Contact();
         $contact->name = $request->name;
@@ -105,8 +105,8 @@ class ContactController extends Controller
      */
     public function destroy(Contact $contact)
     {
-        Storage::delete("public/photo/" . $contact->photo);
+        // Storage::delete("public/photo/" . $contact->photo);
         $contact->delete();
-        return redirect()->route("contact.index")->with("status", "Contact is deleted successfully");
+        return redirect()->route("contact.index")->with("status", "Contact is moved to trash");
     }
 }
