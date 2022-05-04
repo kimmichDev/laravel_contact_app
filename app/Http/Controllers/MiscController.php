@@ -35,12 +35,19 @@ class MiscController extends Controller
 
     public function bulkPermanentDelete(Request $request)
     {
-        foreach ($request->bulkChecks as $key => $value) {
-            $contact = Contact::withTrashed()->find($value);
-            Storage::delete("public/photo/" . $contact->photo);
-            $contact->forceDelete();
-            $contact->delete();
-        };
+
+        Contact::onlyTrashed()->whereIn("id", $request->bulkChecks)->forceDelete();
+        // foreach ($request->bulkChecks as $key => $value) {
+        //     $contact = Contact::withTrashed()->find($value);
+        //     Storage::delete("public/photo/" . $contact->photo);
+        //     $contact->forceDelete();
+        //     $contact->delete();
+        // };
         return redirect()->back()->with("status", "Contact is permanently deleted");
+    }
+
+    public function restore(Request $request)
+    {
+        return $request;
     }
 }

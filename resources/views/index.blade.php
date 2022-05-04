@@ -127,7 +127,10 @@
                 $(".p-del-btn").removeClass("d-none animate__fadeOut");
                 $(".p-del-btn").addClass("d-inline-block animate__fadeIn");
                 $('.trash-text').html(
-                    `Move to trash <span class="fw-bold">${$('.checkBox:checked').length} contact${$('.checkBox:checked').length>1 ? "s" : ""}</span>`
+                    `Move to trash 
+                    <span class="fw-bold">${$('.checkBox:checked').length} contact${$('.checkBox:checked').length>1 ? "s" : ""}</span>
+                    <i class="bi bi-trash2 ms-2 h4"></i>
+                    `
                 )
                 if ($('.checkBox:checked').length == 0) {
                     $(".p-del-btn")
