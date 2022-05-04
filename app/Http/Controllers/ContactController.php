@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
 use Illuminate\Support\Facades\Storage;
 
+use function PHPUnit\Framework\returnSelf;
+
 class ContactController extends Controller
 {
     /**
@@ -16,7 +18,10 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return view("index", ["contacts" => Contact::latest('id')->get()]);
+        $contact = Contact::when(request("search"), function ($q, $kw) {
+            return $q->where("name", "like", "%$kw%")->orWhere("phone", "like", "%$kw%");
+        })->latest("id")->get();
+        return view("index", ["contacts" => $contact, "search" => request("search") ?? ""]);
     }
 
     /**

@@ -7,9 +7,12 @@
     </nav> --}}
     <div class=" d-flex justify-content-between align-items-center">
         <div class="btn-group">
-            <button class="btn btn-outline-primary">
+            <button class="btn btn-primary">
                 <i class="bi bi-house-heart"></i>
             </button>
+            <a href="{{ route('contact.create') }}" class="text-decoration-none btn btn-outline-primary">
+                <i class="bi bi-plus-circle h3 mb-0"></i>
+            </a>
         </div>
         <div class="ms-md-3">
             <a href="{{ route('showTrash') }}" class="btn btn-outline-danger my-2 p-2 p-md-3 text-decoration-none">
@@ -25,16 +28,14 @@
     <div class="card shadow blur">
 
         <div class="card-body">
-            <a href="{{ route('contact.create') }}" class="text-decoration-none">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0 text-black">Contact List</h3>
-                    <i class="bi bi-plus-circle h3 mb-0"></i>
-                </div>
-            </a>
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0 text-black text-nowrap">Contact List</h3>
+                <x-search search="{{ $search }}" />
+            </div>
         </div>
 
     </div>
-    <div class="d-flex justify-content-between align-items-center my-3">
+    <div class="d-flex justify-content-between align-items-center my-2">
         <button type="submit" form="checkForm" class="btn btn-danger p-del-btn d-none animate__animated animate__fadeIn">
             <p class="mb-0 small trash-text"></p>
         </button>
