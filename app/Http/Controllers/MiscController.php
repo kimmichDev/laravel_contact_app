@@ -11,7 +11,7 @@ class MiscController extends Controller
 {
     public function showTrash()
     {
-        $contacts = Contact::onlyTrashed()->get();
+        $contacts = Contact::onlyTrashed()->where("user_id", auth()->user()->id)->get();
         return view('showTrash', ["contacts" => $contacts]);
     }
 
@@ -53,7 +53,7 @@ class MiscController extends Controller
         ]);
         $receiver_user = User::where("email", $request->receiver_email)->first();
         if (is_null($receiver_user)) {
-            return redirect()->route("contact.index")->with("status", "No user with such email address");
+            return redirect()->route("contact.index")->with(["status" => "No user with such email address", "icon" => "error"]);
         }
         Contact::whereIn("id", request("contact_id"))->update(["user_id" => $receiver_user->id]);
         // $contact->user_id = $receiver_user->id;

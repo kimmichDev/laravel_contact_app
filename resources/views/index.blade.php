@@ -13,6 +13,7 @@
     </div>
 @endsection
 @section('content')
+    {{ session('icon') }}
     <div class="modal" tabindex="-1" id="myModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -79,7 +80,7 @@
 @endsection
 @section('js')
     @if (session('status'))
-        @include('./plugin/swal')
+        <x-toast />
     @endif
     <script>
         let checks = document.querySelectorAll(".form-check-input");

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 use function PHPUnit\Framework\returnSelf;
@@ -68,6 +69,7 @@ class ContactController extends Controller
      */
     public function show(Contact $contact)
     {
+        Gate::authorize("view", $contact);
         return view("show", compact("contact"));
     }
 
@@ -79,6 +81,7 @@ class ContactController extends Controller
      */
     public function edit(Contact $contact)
     {
+        Gate::authorize("update", $contact);
         return view("edit", ["contact" => $contact]);
     }
 
@@ -91,6 +94,7 @@ class ContactController extends Controller
      */
     public function update(UpdateContactRequest $request, Contact $contact)
     {
+        Gate::authorize("update", $contact);
         $contact->name = $request->name;
         $contact->phone = $request->phone;
         if ($request->hasFile("photo")) {
