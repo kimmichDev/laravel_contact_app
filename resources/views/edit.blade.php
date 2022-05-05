@@ -1,13 +1,13 @@
 @extends('layout')
 @section('bread')
-    <div class="">
-        <div class="btn-group mb-3">
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <div class="btn-group">
             <a class="btn btn-outline-primary" href="{{ route('contact.index') }}">
-                <i class="bi bi-house-heart"></i>
+                <i class="bi bi-house-heart h3 mb-0"></i>
             </a>
-            <button class="btn btn-success">
-                <i class="bi bi-pen"></i>
-            </button>
+            <a href="{{ route('contact.create') }}" class="text-decoration-none btn btn-success">
+                <i class="bi bi-pen h3 mb-0"></i>
+            </a>
         </div>
     </div>
 @endsection
@@ -34,7 +34,7 @@
                     @enderror
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="number" value="{{ old('phone', $contact->phone) }}" name="phone"
+                    <input type="text" value="{{ old('phone', $contact->phone) }}" name="phone"
                         class="form-control @error('phone') is-invalid @enderror" id="floatingPassword"
                         placeholder="Password">
                     <label for="floatingPassword">Phone Number</label>

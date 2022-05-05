@@ -2,9 +2,9 @@
 @section('bread')
     <div class=" d-flex justify-content-between align-items-center">
         <div class="btn-group">
-            <button class="btn btn-primary">
-                <i class="bi bi-house-heart"></i>
-            </button>
+            <a class="btn btn-primary" href="{{ route('contact.index') }}">
+                <i class="bi bi-house-heart h3 mb-0"></i>
+            </a>
             <a href="{{ route('contact.create') }}" class="text-decoration-none btn btn-outline-primary">
                 <i class="bi bi-plus-circle h3 mb-0"></i>
             </a>
@@ -43,7 +43,7 @@
     </div>
     <div>
         @foreach ($contacts as $contact)
-            <x-phone-card :contact="$contact" showLink="show" />
+            <x-phone-card :contact="$contact" showLink="show" showAction="show" />
         @endforeach
     </div>
 @endsection
@@ -54,16 +54,6 @@
 @endif
 @section('js')
     <script>
-        ScrollReveal.reveal('.contact-list', {
-            distance: '50px',
-            easing: 'ease-out',
-            duration: 600,
-            interval: 200,
-            origin: 'bottom',
-            mobile: true,
-            reset: true,
-            scale: 0.9
-        });
         let checks = document.querySelectorAll(".form-check-input");
         checks.forEach((c) => {
             c.addEventListener("change", () => {

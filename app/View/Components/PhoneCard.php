@@ -11,11 +11,12 @@ class PhoneCard extends Component
      *
      * @return void
      */
-    public $contact, $showLink;
-    public function __construct($contact, $showLink)
+    public $contact, $showLink, $showAction;
+    public function __construct($contact, $showLink, $showAction)
     {
         $this->contact = $contact;
         $this->showLink = $showLink;
+        $this->showAction = $showAction;
     }
 
     /**

@@ -38,10 +38,10 @@ class MiscController extends Controller
 
         if (request('action') === "delete") {
             Contact::onlyTrashed()->whereIn("id", $request->bulkChecks)->forceDelete();
-            return redirect()->back()->with("status", "Contact permanently deleted");
+            return redirect()->route("showTrash")->with("status", "Contact permanently deleted");
         }
         Contact::onlyTrashed()->whereIn("id", $request->bulkChecks)->restore();
-        return redirect()->back()->with("status", "Contact restored");
+        return redirect()->route("showTrash")->with("status", "Contact restored");
     }
 
     public function restore(Request $request)

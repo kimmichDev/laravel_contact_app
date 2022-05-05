@@ -1,13 +1,13 @@
 @extends('layout')
 @section('bread')
-    <div class="mb-3">
+    <div class="mb-3 d-flex justify-content-between align-items-center">
         <div class="btn-group">
             <a class="btn btn-outline-primary" href="{{ route('contact.index') }}">
-                <i class="bi bi-house-heart"></i>
+                <i class="bi bi-house-heart h3 mb-0"></i>
             </a>
-            <button class="btn btn-danger">
-                <i class="bi bi-trash"></i>
-            </button>
+            <a href="{{ route('contact.create') }}" class="text-decoration-none btn btn-danger">
+                <i class="bi bi-trash2 h3 mb-0"></i>
+            </a>
         </div>
     </div>
 @endsection
@@ -36,7 +36,7 @@
         </form>
     </div>
     @forelse ($contacts as $contact)
-        <x-phone-card :contact="$contact" showLink="hide" />
+        <x-phone-card :contact="$contact" showLink="hide" showAction="hide" />
     @empty
         <div class="card blur shadow">
             <div class="card-body">
@@ -45,12 +45,11 @@
         </div>
     @endforelse
 @endsection
-@if (session('status'))
-    @section('js')
-        @include('./plugin/swal')
-    @endsection
-@endif
+
 @section('js')
+    @if (session('status'))
+        @include('./plugin/swal')
+    @endif
     <script>
         let checks = document.querySelectorAll(".form-check-input");
         checks.forEach((c) => {

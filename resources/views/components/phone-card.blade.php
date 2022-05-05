@@ -1,6 +1,9 @@
 <div class="card my-2 my-md-3 mx-3 shadow me-4 rounded blur contact-list">
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
+        <div
+            class="d-flex @if ($showAction === 'show') justify-content-between
+            @else
+            justify-content-around @endif align-items-center">
             <div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input checkBox" name="bulkChecks[]" type="checkbox" id="inlineCheckbox1"
@@ -38,22 +41,24 @@
                     </a>
                 </div>
             </div>
-            <div class="to-right-icons">
-                <div
-                    class="mb-2 p-3 p-md-4 bg-primary border text-light d-flex justify-content-center align-items-center icon-rounded">
-                    <a href="{{ route('contact.edit', $contact->id) }}">
-                        <i class="bi bi-pen text-light"></i>
-                    </a>
+            @if ($showAction === 'show')
+                <div class="to-right-icons">
+                    <div
+                        class="mb-2 p-3 p-md-4 bg-primary border text-light d-flex justify-content-center align-items-center icon-rounded">
+                        <a href="{{ route('contact.edit', $contact->id) }}">
+                            <i class="bi bi-pen text-light"></i>
+                        </a>
+                    </div>
+                    <form action="{{ route('contact.destroy', $contact->id) }}" method="POST" class="icon-rounded">
+                        @method('delete')
+                        @csrf
+                        <button
+                            class="btn btn-danger icon-rounded d-flex justify-content-center p-3 p-md-4  align-items-center">
+                            <span> <i class="bi bi-trash"></i></span>
+                        </button>
+                    </form>
                 </div>
-                <form action="{{ route('contact.destroy', $contact->id) }}" method="POST" class="icon-rounded">
-                    @method('delete')
-                    @csrf
-                    <button
-                        class="btn btn-danger icon-rounded d-flex justify-content-center p-3 p-md-4  align-items-center">
-                        <span> <i class="bi bi-trash"></i></span>
-                    </button>
-                </form>
-            </div>
+            @endif
         </div>
     </div>
 </div>
