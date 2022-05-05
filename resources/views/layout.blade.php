@@ -15,7 +15,7 @@
             <div class="col-12 col-lg-6 mt-3">
 
                 <div>
-                    <h1 class="text-center">Contact App</h1>
+                    {{-- <h1 class="text-center">Contact App</h1> --}}
                     @yield('bread')
                 </div>
                 <div>

@@ -20,7 +20,7 @@ class ContactController extends Controller
     {
         $contact = Contact::when(request("search"), function ($q, $kw) {
             return $q->where("name", "like", "%$kw%")->orWhere("phone", "like", "%$kw%");
-        })->latest("id")->get();
+        })->where("user_id", auth()->user()->id)->latest("id")->get();
         return view("index", ["contacts" => $contact, "search" => request("search") ?? ""]);
     }
 
@@ -50,6 +50,7 @@ class ContactController extends Controller
         $contact = new Contact();
         $contact->name = $request->name;
         $contact->phone = $request->phone;
+        $contact->user_id = auth()->user()->id;
         if ($request->hasFile("photo")) {
             $fileName = uniqid() . "-photo." . $request->file("photo")->extension();
             $request->file('photo')->storeAs("public/photo/", $fileName);

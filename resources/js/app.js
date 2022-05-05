@@ -16,3 +16,5 @@ window.ScrollReveal.reveal('.contact-list', {
     scale: 0.9
 });
 
+window.bootstrap = require("bootstrap");
+

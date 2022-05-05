@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -44,8 +45,19 @@ class MiscController extends Controller
         return redirect()->route("showTrash")->with("status", "Contact restored");
     }
 
-    public function restore(Request $request)
+    public function sendContact(Request $request)
     {
-        return $request;
+        $request->validate([
+            "contact_id" => "required",
+            "receiver_email" => "required"
+        ]);
+        $receiver_user = User::where("email", $request->receiver_email)->first();
+        if (is_null($receiver_user)) {
+            return redirect()->route("contact.index")->with("status", "No user with such email address");
+        }
+        Contact::whereIn("id", request("contact_id"))->update(["user_id" => $receiver_user->id]);
+        // $contact->user_id = $receiver_user->id;
+        // $contact->update();
+        return redirect()->route("contact.index")->with("status", "Contact sent successfully");
     }
 }

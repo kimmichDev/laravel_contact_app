@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string("name");
             $table->text("phone");
             $table->text("photo")->nullable();
+            $table->bigInteger("user_id");
             $table->softDeletes();
             $table->timestamps();
         });
