@@ -12,10 +12,8 @@ class SendModal extends Component
      * @return void
      */
 
-    public $contactId;
-    public function __construct($contactId)
+    public function __construct()
     {
-        $this->contactId = $contactId;
     }
 
     /**

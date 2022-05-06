@@ -13,29 +13,13 @@
     </div>
 @endsection
 @section('content')
-    {{ session('icon') }}
-    <div class="modal" tabindex="-1" id="myModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Send to user</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Enter receiver's email address</p>
-                    <form action="{{ route('sendContact') }}" method="POST">
-                        @csrf
-                        <div class="hide-input"></div>
-                        <div class="input-group mb-3">
-                            <input type="email" required class="form-control" placeholder="Recipient's username"
-                                name="receiver_email">
-                            <button class="btn btn-success"><i class="bi bi-send-plus text-light"></i></button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <div class="d-none">
+        <form action="{{ route('bulkDelete') }}" id="checkForm" method="POST">
+            @method("delete")
+            @csrf
+        </form>
     </div>
+    <x-send-modal />
 
     <div class="ms-md-3">
         <a href="{{ route('showTrash') }}" class="btn btn-outline-danger my-2 p-2 p-md-3 text-decoration-none">
@@ -60,22 +44,18 @@
             <p class="mb-0 small trash-text"></p>
         </button>
         <div>
-            <button class="btn btn-success text-light send-btn">
+            <button class="btn btn-success text-light send-btn" data-bs-toggle="modal" data-bs-target="#myModal">
                 <span>Send</span>
                 <i class="bi bi-send"></i>
             </button>
         </div>
     </div>
-    <div class="d-none">
-        <form action="{{ route('bulkDelete') }}" id="checkForm" method="POST">
-            @method("delete")
-            @csrf
-        </form>
-    </div>
     <div>
-        @foreach ($contacts as $contact)
+        @forelse ($contacts as $contact)
             <x-phone-card :contact="$contact" showLink="show" showAction="show" />
-        @endforeach
+        @empty
+            <p class="fw-bold my-3">No contact available</p>
+        @endforelse
     </div>
 @endsection
 @section('js')
@@ -103,12 +83,7 @@
 
             })
         })
-
-        var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
-            keyboard: false
-        });
         $(".send-btn").on("click", () => {
-            myModal.show();
             $(".hide-input").html("");
             $('.checkBox:checked').each((key, value) => {
                 $(".hide-input").append(

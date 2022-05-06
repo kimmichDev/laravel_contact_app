@@ -49,14 +49,14 @@
                             <i class="bi bi-pen text-light"></i>
                         </a>
                     </div>
-                    <form action="{{ route('contact.destroy', $contact->id) }}" method="POST" class="icon-rounded">
+                    {{-- <form action="{{ route('contact.destroy', $contact->id) }}" method="POST" class="icon-rounded">
                         @method('delete')
                         @csrf
                         <button
                             class="btn btn-danger icon-rounded d-flex justify-content-center p-3 p-md-4  align-items-center">
                             <span> <i class="bi bi-trash"></i></span>
                         </button>
-                    </form>
+                    </form> --}}
                 </div>
             @endif
         </div>
