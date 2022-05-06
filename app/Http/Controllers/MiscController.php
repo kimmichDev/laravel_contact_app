@@ -38,7 +38,11 @@ class MiscController extends Controller
     {
 
         if (request('action') === "delete") {
-            Contact::onlyTrashed()->whereIn("id", $request->bulkChecks)->forceDelete();
+            $contacts =  Contact::onlyTrashed()->whereIn("id", $request->bulkChecks);
+            foreach ($contacts->get() as $contact) {
+                Storage::delete("public/photo/" . $contact->photo);
+            }
+            $contacts->forceDelete();
             return redirect()->route("showTrash")->with("status", "Contact permanently deleted");
         }
         Contact::onlyTrashed()->whereIn("id", $request->bulkChecks)->restore();
@@ -52,12 +56,16 @@ class MiscController extends Controller
             "receiver_email" => "required"
         ]);
         $receiver_user = User::where("email", $request->receiver_email)->first();
+        $contact_ids = request("contact_id");
         if (is_null($receiver_user)) {
             return redirect()->route("contact.index")->with(["status" => "No user with such email address", "icon" => "error"]);
         }
-        Contact::whereIn("id", request("contact_id"))->update(["user_id" => $receiver_user->id]);
-        // $contact->user_id = $receiver_user->id;
-        // $contact->update();
+        foreach ($contact_ids as $contact_id) {
+            $contact = Contact::find($contact_id);
+            $newPhotoName = uniqid() . "-photo." . pathinfo(asset("storage/photo/" . $contact->photo))["extension"];
+            Storage::copy("public/photo/" . $contact->photo, "public/photo/" . $newPhotoName);
+            $contact->replicate()->fill(["user_id" => $receiver_user->id, "photo" => $newPhotoName])->save(); //duplicate record with updated user_id
+        };
         return redirect()->route("contact.index")->with("status", "Contact sent successfully");
     }
 }
