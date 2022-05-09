@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
+use App\Models\ContactQueue;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,10 +21,11 @@ class ContactController extends Controller
      */
     public function index()
     {
+        $total_contact_request =  ContactQueue::where("receiver_id", Auth::id())->get()->count();
         $contact = Contact::when(request("search"), function ($q, $kw) {
             return $q->where("name", "like", "%$kw%")->orWhere("phone", "like", "%$kw%");
         })->where("user_id", auth()->user()->id)->latest("id")->get();
-        return view("index", ["contacts" => $contact, "search" => request("search") ?? ""]);
+        return view("index", ["contacts" => $contact, "search" => request("search") ?? "", "total_contact_request" => $total_contact_request]);
     }
 
     /**

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\ContactQueue;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class MiscController extends Controller
@@ -61,11 +63,43 @@ class MiscController extends Controller
             return redirect()->route("contact.index")->with(["status" => "No user with such email address", "icon" => "error"]);
         }
         foreach ($contact_ids as $contact_id) {
-            $contact = Contact::find($contact_id);
-            $newPhotoName = uniqid() . "-photo." . pathinfo(asset("storage/photo/" . $contact->photo))["extension"];
-            Storage::copy("public/photo/" . $contact->photo, "public/photo/" . $newPhotoName);
-            $contact->replicate()->fill(["user_id" => $receiver_user->id, "photo" => $newPhotoName])->save(); //duplicate record with updated user_id
+            $sender_id = Auth::id();
+            $receiver_id = $receiver_user->id;
+            ContactQueue::create([
+                "contact_id" => $contact_id,
+                "sender_id" => $sender_id,
+                "receiver_id" => $receiver_id,
+            ]);
         };
         return redirect()->route("contact.index")->with("status", "Contact sent successfully");
+    }
+
+    public function contactQueue()
+    {
+        $contactQueues = ContactQueue::where("receiver_id", Auth::id())->with('contact', 'sender')->get();
+        return view("contactQueue", ["contactQueues" => $contactQueues]);
+    }
+
+    public function acceptContact(Request $request)
+    {
+        $contact_id = $request->contact_id;
+        $receiver_id = Auth::id();
+        $contact = Contact::find($contact_id);
+        if (isset(pathinfo(asset("storage/photo/" . $contact->photo))["extension"])) {
+            $newPhotoName = uniqid() . "-photo." . pathinfo(asset("storage/photo/" . $contact->photo))["extension"];
+            Storage::copy("public/photo/" . $contact->photo, "public/photo/" . $newPhotoName);
+            $contact->replicate()->fill(["user_id" => $receiver_id, "photo" => $newPhotoName])->save(); //duplicate record with updated user_id
+            ContactQueue::where("contact_id", $contact_id)->where("receiver_id", Auth::id())->delete(); //delete queue record
+        } else {
+            $contact->replicate()->fill(["user_id" => $receiver_id])->save(); //duplicate record with updated user_id
+            ContactQueue::where("contact_id", $contact_id)->where("receiver_id", Auth::id())->delete(); //delete queue record
+        }
+        return redirect()->route("contactQueue")->with("status", "Contact accept successfully");
+    }
+
+    public function denyContact(Request $request)
+    {
+        ContactQueue::find($request->queue_id)->delete();
+        return redirect()->route("contactQueue")->with("status", "Contact request deleted successfully");
     }
 }

@@ -22,12 +22,21 @@
     <x-send-modal />
 
     <div class="ms-md-3">
-        <a href="{{ route('showTrash') }}" class="btn btn-outline-danger my-2 p-2 p-md-3 text-decoration-none">
-            <span class="p-1 p-md-2 bg-danger rounded-circle text-light me-3">
-                <i class="bi bi-trash"></i>
-            </span>
-            <span class="text-black"> Trash contacts</span>
-        </a>
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ route('showTrash') }}" class="btn btn-outline-danger my-2 p-2 p-md-3 text-decoration-none">
+                <span class="p-1 p-md-2 bg-danger rounded-circle text-light me-3">
+                    <i class="bi bi-trash"></i>
+                </span>
+                <span class="text-black"> Trash contacts</span>
+            </a>
+            <a href="{{ route('contactQueue') }}" class="btn btn-primary position-relative me-3">
+                Contact requests
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ $total_contact_request }}
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            </a>
+        </div>
     </div>
 
     <div class="card shadow blur">
