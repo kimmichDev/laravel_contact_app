@@ -17,9 +17,12 @@ class ContactFactory extends Factory
      */
     public function definition()
     {
+        $phone1 = $this->faker->phoneNumber();
+        $phone2 = $this->faker->phoneNumber();
+        $phone3 = $this->faker->phoneNumber();
         return [
             "name" => $this->faker->name(),
-            "phone" =>  $this->faker->phoneNumber(),
+            "phones" =>  [$phone1, $phone2, $phone3],
             "user_id" => User::inRandomOrder()->first()->id,
         ];
     }

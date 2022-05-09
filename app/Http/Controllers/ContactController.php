@@ -48,12 +48,13 @@ class ContactController extends Controller
     {
         $request->validate([
             "name" => "required|min:3",
-            "phone" => 'required|regex:/(0)[0-9]{9}/',
+            "phones" => 'required',
+            "phones.*" => 'regex:/(0)[0-9]{9}/',
             "photo" => "nullable|mimes:png,jpeg|file|max:2000",
         ]);
         $contact = new Contact();
         $contact->name = $request->name;
-        $contact->phone = $request->phone;
+        $contact->phones = $request->phones;
         $contact->user_id = auth()->user()->id;
         if ($request->hasFile("photo")) {
             $fileName = uniqid() . "-photo." . $request->file("photo")->extension();
@@ -99,7 +100,7 @@ class ContactController extends Controller
     {
         Gate::authorize("update", $contact);
         $contact->name = $request->name;
-        $contact->phone = $request->phone;
+        $contact->phones = $request->phones;
         if ($request->hasFile("photo")) {
             Storage::delete("public/photo/" . $contact->photo);
             $fileName = uniqid() . "-photo." . $request->file("photo")->extension();

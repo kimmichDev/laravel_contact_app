@@ -20,7 +20,7 @@
                     <a href="{{ route('contact.show', $contact->id) }}" class="text-decoration-none">
                         <div class="p-md-2">
                             <h5 class="text-black">{{ Str::substr($contact->name, 0, 15) }}</h5>
-                            <p class=" text-black">{{ $contact->phone }}</p>
+                            <p class=" text-black">{{ $contact->phones[0] }}</p>
                         </div>
                     </a>
                 @else

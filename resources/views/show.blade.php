@@ -26,10 +26,12 @@
                                 <i class="bi bi-card-text text-primary me-3"></i>
                                 {{ $contact->name }}
                             </h3>
-                            <p>
-                                <i class="bi bi-telephone text-success h3 me-3"></i>
-                                {{ $contact->phone }}
-                            </p>
+                            @foreach ($contact->phones as $phone)
+                                <p>
+                                    <i class="bi bi-telephone text-success h3 me-3"></i>
+                                    {{ $phone }}
+                                </p>
+                            @endforeach
                             <a href="tel:{{ $contact->phone }}" class="btn btn-outline-success p-3 text-decoration-none">
                                 <span class="p-2 bg-success rounded-circle text-light me-3">
                                     <i class="bi bi-telephone"></i>

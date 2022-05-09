@@ -31,14 +31,39 @@
                         <small class="invalid-feedback">{{ $message }}</small>
                     @enderror
                 </div>
-                <div class="form-floating mb-3">
-                    <input type="number" value="{{ old('phone') }}" name="phone"
-                        class="form-control @error('phone') is-invalid @enderror" id="floatingPassword"
-                        placeholder="Password">
-                    <label for="floatingPassword">Phone Number</label>
-                    @error('phone')
-                        <small class="invalid-feedback">{{ $message }}</small>
-                    @enderror
+                <div class="phoneArea">
+                    @if (old('phones'))
+                        @forelse (old('phones') as $key=>$oldPhone)
+                            <div class="form-floating mb-3 phone">
+                                <input type="number" value="{{ old("phones.$key") }}" name="phones[]"
+                                    class="form-control @error("phones.$key") is-invalid @enderror" id="floatingPassword"
+                                    placeholder="Password">
+                                <label for="floatingPassword">Phone Number</label>
+                                @error("phones.$key")
+                                    <small class="invalid-feedback">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        @empty
+                            <div class="form-floating mb-3 phone">
+                                <input type="number" name="phones[]" class="form-control id=" floatingPassword"
+                                    placeholder="Password">
+                                <label for="floatingPassword">Phone Number</label>
+                            </div>
+                        @endforelse
+                    @else
+                        <div class="form-floating mb-3 phone">
+                            <input type="number" name="phones[]" class="form-control id=" floatingPassword"
+                                placeholder="Password">
+                            <label for="floatingPassword">Phone Number</label>
+                        </div>
+                    @endif
+
+
+                </div>
+                <div class="mb-3">
+                    <button type="button" id="addPhoneBtn" class="btn btn-sm btn-success text-light w-100">
+                        <i class="bi bi-plus-circle me-2"></i> Add new phone
+                    </button>
                 </div>
                 <div class="mb-3">
                     <input type="file" name="photo" class="form-control photo-input @error('photo') is-invalid @enderror"
@@ -67,6 +92,17 @@
                 img.src = fileReader.result;
             }
             fileReader.readAsDataURL(imgFile);
+        });
+
+        $("#addPhoneBtn").on("click", () => {
+            $(".phoneArea").append(`
+                    <div class="form-floating mb-3 phone">
+                        <input type="number" name="phones[]"
+                            class="form-control id="floatingPassword"
+                            placeholder="Password">
+                        <label for="floatingPassword">Phone Number</label>
+                    </div>
+            `);
         });
     </script>
 @endsection

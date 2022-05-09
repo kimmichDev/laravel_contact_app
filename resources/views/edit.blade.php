@@ -33,15 +33,17 @@
                         <small class="invalid-feedback">{{ $message }}</small>
                     @enderror
                 </div>
-                <div class="form-floating mb-3">
-                    <input type="text" value="{{ old('phone', $contact->phone) }}" name="phone"
-                        class="form-control @error('phone') is-invalid @enderror" id="floatingPassword"
-                        placeholder="Password">
-                    <label for="floatingPassword">Phone Number</label>
-                    @error('phone')
-                        <small class="invalid-feedback">{{ $message }}</small>
-                    @enderror
-                </div>
+                @foreach ($contact->phones as $phone)
+                    <div class="form-floating mb-3">
+                        <input type="text" value="{{ old('phone', $phone) }}" name="phones[]"
+                            class="form-control @error('phone') is-invalid @enderror" id="floatingPassword"
+                            placeholder="Password">
+                        <label for="floatingPassword">Phone Number</label>
+                        @error('phone')
+                            <small class="invalid-feedback">{{ $message }}</small>
+                        @enderror
+                    </div>
+                @endforeach
                 <div class="mb-3">
                     <input type="file" name="photo" class="form-control photo-input @error('photo') is-invalid @enderror"
                         id="">
