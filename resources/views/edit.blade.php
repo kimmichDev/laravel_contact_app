@@ -33,17 +33,24 @@
                         <small class="invalid-feedback">{{ $message }}</small>
                     @enderror
                 </div>
-                @foreach ($contact->phones as $phone)
-                    <div class="form-floating mb-3">
-                        <input type="text" value="{{ old('phone', $phone) }}" name="phones[]"
-                            class="form-control @error('phone') is-invalid @enderror" id="floatingPassword"
-                            placeholder="Password">
-                        <label for="floatingPassword">Phone Number</label>
-                        @error('phone')
-                            <small class="invalid-feedback">{{ $message }}</small>
-                        @enderror
-                    </div>
-                @endforeach
+                <div class="phoneArea">
+                    @foreach ($contact->phones as $phone)
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control @error('phone') is-invalid @enderror"
+                                value="{{ old('phone', $phone) }}" name="phones[]">
+                            <span class="input-group-text remove-input" id="basic-addon2"><i
+                                    class="bi bi-x-circle"></i></span>
+                            @error('phone')
+                                <small class="invalid-feedback">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    @endforeach
+                </div>
+                <div class="mb-3">
+                    <button type="button" id="addPhoneBtn" class="btn btn-sm btn-success text-light w-100">
+                        <i class="bi bi-plus-circle me-2"></i> Add new phone
+                    </button>
+                </div>
                 <div class="mb-3">
                     <input type="file" name="photo" class="form-control photo-input @error('photo') is-invalid @enderror"
                         id="">
@@ -53,7 +60,7 @@
                 </div>
                 <div class="d-flex justify-content-end">
                     <button class="btn btn-primary">
-                        Create Now
+                        Update
                     </button>
                 </div>
             </form>
@@ -72,5 +79,18 @@
             }
             fileReader.readAsDataURL(imgFile);
         });
+
+        $("#addPhoneBtn").on("click", () => {
+            $(".phoneArea").append(`
+            <div class="input-group mb-3">
+                 <input type="text" class="form-control" placeholder="Phone number" name="phones[]">
+                 <span class="input-group-text remove-input" id="basic-addon2"><i class="bi bi-x-circle"></i></span>
+            </div>
+            `);
+        });
+
+        $('.phoneArea').delegate(".remove-input", "click", function() {
+            $(this).parent(".input-group").remove();
+        })
     </script>
 @endsection

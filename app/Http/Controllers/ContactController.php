@@ -46,10 +46,11 @@ class ContactController extends Controller
      */
     public function store(StoreContactRequest $request)
     {
+        // return $request;
         $request->validate([
             "name" => "required|min:3",
             "phones" => 'required',
-            "phones.*" => 'regex:/(0)[0-9]{9}/',
+            "phones.*" => 'required|regex:/(0)[0-9]{9}/',
             "photo" => "nullable|mimes:png,jpeg|file|max:2000",
         ]);
         $contact = new Contact();
@@ -98,6 +99,11 @@ class ContactController extends Controller
      */
     public function update(UpdateContactRequest $request, Contact $contact)
     {
+        $request->validate([
+            "name" => "required|min:3",
+            "phones" => 'required',
+            "photo" => "nullable|mimes:png,jpeg|file|max:2000",
+        ]);
         Gate::authorize("update", $contact);
         $contact->name = $request->name;
         $contact->phones = $request->phones;

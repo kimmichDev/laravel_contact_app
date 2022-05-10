@@ -34,26 +34,30 @@
                 <div class="phoneArea">
                     @if (old('phones'))
                         @forelse (old('phones') as $key=>$oldPhone)
-                            <div class="form-floating mb-3 phone">
-                                <input type="number" value="{{ old("phones.$key") }}" name="phones[]"
-                                    class="form-control @error("phones.$key") is-invalid @enderror" id="floatingPassword"
-                                    placeholder="Password">
-                                <label for="floatingPassword">Phone Number</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control @error("phones.$key") is-invalid @enderror"
+                                    value="{{ old("phones.$key") }}" name="phones[]">
+                                <span class="input-group-text remove-input" id="basic-addon2"><i
+                                        class="bi bi-x-circle"></i></span>
                                 @error("phones.$key")
                                     <small class="invalid-feedback">{{ $message }}</small>
                                 @enderror
                             </div>
+
                         @empty
+                            <span>no</span>
                             <div class="form-floating mb-3 phone">
-                                <input type="number" name="phones[]" class="form-control id=" floatingPassword"
-                                    placeholder="Password">
+                                <input type="number" name="phones[]"
+                                    class="form-control @error('phones.*') is-invalid @enderror" id=" floatingPassword">
                                 <label for="floatingPassword">Phone Number</label>
                             </div>
+                            @error('phones.*')
+                                <small class="invalid-feedback">{{ $message }}</small>
+                            @enderror
                         @endforelse
                     @else
                         <div class="form-floating mb-3 phone">
-                            <input type="number" name="phones[]" class="form-control id=" floatingPassword"
-                                placeholder="Password">
+                            <input type="number" name="phones[]" class="form-control id=" floatingPassword">
                             <label for="floatingPassword">Phone Number</label>
                         </div>
                     @endif
@@ -96,13 +100,15 @@
 
         $("#addPhoneBtn").on("click", () => {
             $(".phoneArea").append(`
-                    <div class="form-floating mb-3 phone">
-                        <input type="number" name="phones[]"
-                            class="form-control id="floatingPassword"
-                            placeholder="Password">
-                        <label for="floatingPassword">Phone Number</label>
-                    </div>
+            <div class="input-group mb-3">
+                 <input type="text" class="form-control" placeholder="Phone number" name="phones[]">
+                 <span class="input-group-text remove-input" id="basic-addon2"><i class="bi bi-x-circle"></i></span>
+            </div>
             `);
         });
+
+        $('.phoneArea').delegate(".remove-input", "click", function() {
+            $(this).parent(".input-group").remove();
+        })
     </script>
 @endsection
