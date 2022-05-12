@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 
-<body class="min-vh-100 bg">
+<body class="min-vh-100 bg" style="overflow-x: hidden">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-6 mt-3">

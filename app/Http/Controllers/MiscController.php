@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactMail;
 use App\Models\Contact;
 use App\Models\ContactQueue;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class MiscController extends Controller
@@ -58,6 +60,7 @@ class MiscController extends Controller
             "receiver_email" => "required"
         ]);
         $receiver_user = User::where("email", $request->receiver_email)->first();
+        $receiver_email = $receiver_user->email;
         $contact_ids = request("contact_id");
         if (is_null($receiver_user)) {
             return redirect()->route("contact.index")->with(["status" => "No user with such email address", "icon" => "error"]);
@@ -71,6 +74,10 @@ class MiscController extends Controller
                 "receiver_id" => $receiver_id,
             ]);
         };
+        $details = [
+            "title" => "New contact is received",
+        ];
+        Mail::to($receiver_email)->send(new ContactMail($details));
         return redirect()->route("contact.index")->with("status", "Contact sent successfully");
     }
 

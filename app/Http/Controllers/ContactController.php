@@ -102,6 +102,7 @@ class ContactController extends Controller
         $request->validate([
             "name" => "required|min:3",
             "phones" => 'required',
+            "phones.*" => "required",
             "photo" => "nullable|mimes:png,jpeg|file|max:2000",
         ]);
         Gate::authorize("update", $contact);
