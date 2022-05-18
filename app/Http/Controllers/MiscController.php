@@ -6,6 +6,7 @@ use App\Mail\ContactMail;
 use App\Models\Contact;
 use App\Models\ContactQueue;
 use App\Models\User;
+use App\Notifications\ContactShareNoti;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -55,58 +56,99 @@ class MiscController extends Controller
 
     public function sendContact(Request $request)
     {
+        // return $request;
         $request->validate([
-            "contact_id" => "required",
+            "contact_ids" => "required",
             "receiver_email" => "required"
         ]);
         $receiver_user = User::where("email", $request->receiver_email)->first();
-        $receiver_email = $receiver_user->email;
-        $contact_ids = request("contact_id");
+        $contact_ids = request("contact_ids");
         if (is_null($receiver_user)) {
             return redirect()->route("contact.index")->with(["status" => "No user with such email address", "icon" => "error"]);
         }
-        foreach ($contact_ids as $contact_id) {
-            $sender_id = Auth::id();
-            $receiver_id = $receiver_user->id;
-            ContactQueue::create([
-                "contact_id" => $contact_id,
-                "sender_id" => $sender_id,
-                "receiver_id" => $receiver_id,
-            ]);
-        };
-        $details = [
-            "title" => "New contact is received",
-        ];
-        Mail::to($receiver_email)->send(new ContactMail($details));
+        $contactQueue = new ContactQueue();
+        $contactQueue->contact_ids = json_encode($contact_ids);
+        $contactQueue->sender_id = Auth::id();
+        $contactQueue->receiver_id = $receiver_user->id;
+        $contactQueue->message = $request->message;
+        $contactQueue->save();
+        // foreach ($contact_ids as $contact_id) {
+        //     $sender_id = Auth::id();
+        //     $receiver_id = $receiver_user->id;
+        //     ContactQueue::create([
+        //         "contact_id" => $contact_id,
+        //         "sender_id" => $sender_id,
+        //         "receiver_id" => $receiver_id,
+        //         "message" => $request->message,
+        //     ]);
+        // };
+        $receiver_user->notify(new ContactShareNoti(Auth::user()->name, $request->message, route("contactQueue", $contactQueue->id)));
         return redirect()->route("contact.index")->with("status", "Contact sent successfully");
     }
 
-    public function contactQueue()
+    public function contactQueue($id)
     {
-        $contactQueues = ContactQueue::where("receiver_id", Auth::id())->with('contact', 'sender')->get();
-        return view("contactQueue", ["contactQueues" => $contactQueues]);
+        $contactQueues = ContactQueue::find($id);
+        if ($contactQueues->status) {
+            return abort(404);
+        };
+
+        $contactNumber = Contact::find(json_decode($contactQueues->contact_ids))->count();
+        $contacts = Contact::find(json_decode($contactQueues->contact_ids));
+
+        $noti = Auth::user()->notifications->where("notifiable_id", $contactQueues->receiver_id)->first();
+        $noti->markAsRead();
+
+        return view("contactQueue", ["contactQueue" => $contactQueues, "contactNumber" => $contactNumber, "contacts" => $contacts]);
     }
 
-    public function acceptContact(Request $request)
+    public function acceptContact(Request $request, $id)
     {
-        $contact_id = $request->contact_id;
-        $receiver_id = Auth::id();
-        $contact = Contact::find($contact_id);
-        if (isset(pathinfo(asset("storage/photo/" . $contact->photo))["extension"])) {
-            $newPhotoName = uniqid() . "-photo." . pathinfo(asset("storage/photo/" . $contact->photo))["extension"];
-            Storage::copy("public/photo/" . $contact->photo, "public/photo/" . $newPhotoName);
-            $contact->replicate()->fill(["user_id" => $receiver_id, "photo" => $newPhotoName])->save(); //duplicate record with updated user_id
-            ContactQueue::where("contact_id", $contact_id)->where("receiver_id", Auth::id())->delete(); //delete queue record
-        } else {
-            $contact->replicate()->fill(["user_id" => $receiver_id])->save(); //duplicate record with updated user_id
-            ContactQueue::where("contact_id", $contact_id)->where("receiver_id", Auth::id())->delete(); //delete queue record
-        }
-        return redirect()->route("contactQueue")->with("status", "Contact accept successfully");
+        $contact_ids = json_decode(ContactQueue::find($id)->contact_ids);
+
+
+        Contact::whereIn("id", $contact_ids)
+            ->update(["user_id" => Auth::id()]);
+
+        ContactQueue::find($id)->update(["status" => "accept"]);
+        // $contact_id = $request->contact_id;
+        // $receiver_id = Auth::id();
+        // $contact = Contact::find($contact_id);
+        // if (isset(pathinfo(asset("storage/photo/" . $contact->photo))["extension"])) {
+        //     $newPhotoName = uniqid() . "-photo." . pathinfo(asset("storage/photo/" . $contact->photo))["extension"];
+        //     Storage::copy("public/photo/" . $contact->photo, "public/photo/" . $newPhotoName);
+        //     $contact->replicate()->fill(["user_id" => $receiver_id, "photo" => $newPhotoName])->save(); //duplicate record with updated user_id
+        //     ContactQueue::where("contact_id", $contact_id)->where("receiver_id", Auth::id())->delete(); //delete queue record
+        // } else {
+        //     $contact->replicate()->fill(["user_id" => $receiver_id])->save(); //duplicate record with updated user_id
+        //     ContactQueue::where("contact_id", $contact_id)->where("receiver_id", Auth::id())->delete(); //delete queue record
+        // }
+        return redirect()->route("contact.index")->with("status", "Contact accept successfully");
     }
 
-    public function denyContact(Request $request)
+    public function denyContact($id)
     {
-        ContactQueue::find($request->queue_id)->delete();
-        return redirect()->route("contactQueue")->with("status", "Contact request deleted successfully");
+        $contact_ids = json_decode(ContactQueue::find($id)->contact_ids);
+        ContactQueue::find($id)->update(["status" => "deny"]);
+        return redirect()->route("contact.index")->with("status", "Contact is denied successfully");
+    }
+
+    public function notifications()
+    {
+        $notis = Auth::user()->notifications;
+        return view("notifications", ["notis" => $notis]);
+    }
+
+    public function notificationsRead($id)
+    {
+        $noti = Auth::user()->notifications->where("id", $id)->first();
+        $noti->markAsRead();
+        return redirect()->back();
+    }
+
+    public function notificationsReadAll()
+    {
+        Auth::user()->unreadNotifications->markAsRead();
+        return redirect()->back()->with("status", "All are now read");
     }
 }

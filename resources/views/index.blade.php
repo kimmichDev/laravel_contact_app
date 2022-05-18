@@ -15,7 +15,7 @@
 @section('content')
     <div class="d-none">
         <form action="{{ route('bulkDelete') }}" id="checkForm" method="POST">
-            @method("delete")
+            @method('delete')
             @csrf
         </form>
     </div>
@@ -29,10 +29,10 @@
                 </span>
                 <span class="text-black"> Trash contacts</span>
             </a>
-            <a href="{{ route('contactQueue') }}" class="btn btn-primary position-relative me-3">
-                Contact requests
+            <a href="{{ route('notifications') }}" class="btn btn-primary position-relative">
+                Unread notifications
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {{ $total_contact_request }}
+                    {{ Auth::user()->unreadNotifications->count() }}
                     <span class="visually-hidden">unread messages</span>
                 </span>
             </a>
@@ -96,7 +96,7 @@
             $(".hide-input").html("");
             $('.checkBox:checked').each((key, value) => {
                 $(".hide-input").append(
-                    `<input type="hidden" value="${value.value}" class="hide-input-contact-id" name="contact_id[]">`
+                    `<input type="hidden" value="${value.value}" class="hide-input-contact-id" name="contact_ids[]">`
                 );
             });
             // $(".hide-input-contact-id").attr("value", $('.checkBox:checked')[0].value)

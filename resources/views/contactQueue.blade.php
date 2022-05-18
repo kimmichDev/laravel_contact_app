@@ -13,40 +13,31 @@
 @endsection
 @section('content')
     <div>
-        <h3 class="card-title">Contacts in queue list</h3>
-        @foreach ($contactQueues as $contactQueue)
-            <div class="card shadow mb-3 blur">
+        <h5>{{ $contactQueue->sender->name }} is sending you {{ $contactNumber }} contacts</h5>
+        @foreach ($contacts as $c)
+            <div class="card  mb-3">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="card-title">{{ $contactQueue->contact->name }}</h3>
-                        <span class="bg-primary p-2 text-light rounded">
-                            <i class="bi bi-cursor me-2"></i>
-                            <span>{{ $contactQueue->sender->name }}</span>
-                        </span>
-                    </div>
-                    <small class="text-black-50">{{ $contactQueue->contact->phone }}</small>
-                    <div class="my-3 d-flex justify-content-start align-items-center">
-                        <form class="me-2" action="{{ route('contact.accept') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="contact_id" value="{{ $contactQueue->contact->id }}">
-                            <button type="submit" class="btn btn-success text-light">
-                                <i class="bi bi-check-all me-2 text-light"></i>
-                                <span>Accept</span>
-                            </button>
-                        </form>
-                        <form class="me-2" action="{{ route('contact.deny') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="queue_id" value="{{ $contactQueue->id }}">
-                            <button type="submit" class="btn btn-outline-danger">
-                                <i class="bi bi-x-circle me-2"></i>
-                                <span>Deny</span>
-                            </button>
-                        </form>
+                    <h5>{{ $c->name }}</h5>
+                    <div class="d-flex">
+                        @foreach ($c->phones as $p)
+                            <p class="me-3">{{ $p }}</p>
+                        @endforeach
                     </div>
                 </div>
             </div>
         @endforeach
+        @if ($contactQueue->sender_id !== auth()->id())
+            <div>
+                <form action="{{ route('contact.accept', $contactQueue->id) }}" method="POST">
+                    @csrf
+                    <button class="btn btn-primary" type="submit">Accept</button>
+                    <a href="{{ route('contact.deny', $contactQueue->id) }}" class="btn btn-outline-danger">Reject</a>
+                </form>
 
+            </div>
+        @else
+            <a href="" class="btn btn-outline-danger">Cancel</a>
+        @endif
     </div>
 @endsection
 

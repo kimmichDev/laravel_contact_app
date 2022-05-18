@@ -11,7 +11,7 @@ class ContactQueue extends Model
     protected $fillable = ["contact_id", "sender_id", "receiver_id", "status"];
     public function contact()
     {
-        return $this->belongsTo(Contact::class, "contact_id");
+        return $this->belongsTo(Contact::class, json_decode("contact_id"));
     }
     public function sender()
     {

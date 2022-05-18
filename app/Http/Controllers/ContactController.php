@@ -46,7 +46,6 @@ class ContactController extends Controller
      */
     public function store(StoreContactRequest $request)
     {
-        // return $request;
         $request->validate([
             "name" => "required|min:3",
             "phones" => 'required',
