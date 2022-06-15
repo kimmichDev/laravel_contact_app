@@ -7,6 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use NotificationChannels\Discord\DiscordChannel;
+use NotificationChannels\Discord\DiscordMessage;
 
 class ContactShareNoti extends Notification
 {
@@ -17,12 +19,13 @@ class ContactShareNoti extends Notification
      *
      * @return void
      */
-    public $from, $message, $url;
-    public function __construct($from, $message, $url)
+    public $from, $message, $url, $to;
+    public function __construct($from, $message, $url, $to)
     {
         $this->from = $from;
         $this->message = $message;
         $this->url = $url;
+        $this->to = $to;
     }
 
     /**
@@ -33,7 +36,7 @@ class ContactShareNoti extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail', 'database', DiscordChannel::class];
     }
 
     /**
@@ -63,5 +66,10 @@ class ContactShareNoti extends Notification
             "title" => "Share contact from " . Auth::user()->email,
             "url" => $this->url
         ];
+    }
+
+    public function toDiscord($notifiable)
+    {
+        return DiscordMessage::create(Auth::user()->email . " shared contacts to $this->to \n $this->message \n Check : $this->url");
     }
 }

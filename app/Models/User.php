@@ -17,6 +17,15 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    //  discord messaging
+    public $discord_channel = "976906603938852925";
+
+    public function routeNotificationForDiscord()
+    {
+        return $this->discord_channel;
+    }
+
     protected $fillable = [
         'name',
         'email',

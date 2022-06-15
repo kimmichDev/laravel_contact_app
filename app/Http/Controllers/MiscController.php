@@ -32,10 +32,13 @@ class MiscController extends Controller
     {
 
         $bulkChecks =  $request->bulkChecks;
-        foreach ($bulkChecks as $key => $value) {
+        foreach ($bulkChecks as $value) {
             $contact = Contact::find($value);
+            // return $contact;
             $contact->delete();
         };
+
+
         return redirect()->route("contact.index")->with("status", "Contacts were moved to trash");
     }
 
@@ -82,7 +85,7 @@ class MiscController extends Controller
         //         "message" => $request->message,
         //     ]);
         // };
-        $receiver_user->notify(new ContactShareNoti(Auth::user()->name, $request->message, route("contactQueue", $contactQueue->id)));
+        $receiver_user->notify(new ContactShareNoti(Auth::user()->name, $request->message, route("contactQueue", $contactQueue->id), $receiver_user->email));
         return redirect()->route("contact.index")->with("status", "Contact sent successfully");
     }
 

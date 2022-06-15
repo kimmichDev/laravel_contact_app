@@ -17,6 +17,6 @@ class Contact extends Model
 
     public function contact_queues()
     {
-        return $this->hasMany(ContactQueue::class);
+        return $this->hasMany(ContactQueue::class, "contact_ids");
     }
 }
